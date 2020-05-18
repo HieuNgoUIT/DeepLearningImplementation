@@ -1,11 +1,11 @@
 import numpy as np 
-np.random.seed(42)
+np.random.seed(1)
 
 class NeuralNetWork():
     layer = {}
     b = {}
     def create_matrix_base_on_layer(self, previous_layer, current_layer):
-        return np.random.rand(previous_layer, current_layer)
+        return np.random.rand(current_layer, previous_layer) * 0.01
 
     def create_structure(self, number_each_layer):
         l = len(number_each_layer)
@@ -16,7 +16,11 @@ class NeuralNetWork():
     def calculate_Z(self, X, weights, b):
         #print("X shapre",X.shape)
         #print('w shape', weights.shape)
-        return np.dot(X, weights) + b, (X,weights,b)
+        paramater = {}
+        paramater['A_prev'] = X
+        paramater['w'] = weights
+        #paramater['A_prev'] = X
+        return np.dot(X, weights) + b, paramater
 
     def create_b_base_on_layer(self, layers):
         l = len(layers)
@@ -48,33 +52,37 @@ class NeuralNetWork():
     
     def gradient(self, dZ, paramater):
         d = {}
-        d['w'] = paramater['a_prev'] * dZ
+        d['w'] = paramater['A_prev'] * dZ
         d['b'] = dZ
         d['a'] = paramater['w'] * dZ
+        return d
+    def update_param(self, paramater):
+        self.layer
 
 obj = NeuralNetWork()
 
-weights = obj.create_structure([3,1])
+weights = obj.create_structure([3,2,1])
 print('weights',weights)
 print(weights[1].shape)
-b = obj.create_b_base_on_layer([3,1])
+b = obj.create_b_base_on_layer([3,2,1])
 #print('b', b)
 
 
 
 
-X= np.array([[1,2,3] ])
-Y = np.array([[1]])
-#print(obj.sigmoid(2.88))
+# X= np.array([[1,2,3] ])
+# Y = np.array([[1]])
+# #print(obj.sigmoid(2.88))
 
-AL, caches = obj.foward_prop(X,weights,b)
-#print("caches",caches)
-dZ = AL -Y
-#
+# AL, caches = obj.foward_prop(X,weights,b)
+# #print("caches",caches)
+# dZ = AL -Y
+# #print('dz', dZ)
+# #
+# d = obj.gradient(dZ, caches[0])
+# #print(d)
 
-#print(obj.gradient(dZ,))
+# #print(AL)
+# #print(obj.compute_cost(AL,Y))
 
-#print(AL)
-#print(obj.compute_cost(AL,Y))
-
-print(np.dot([1,2,3], 0.5))
+# #print(np.dot([1,2,3], 0.5))
