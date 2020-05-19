@@ -2,16 +2,22 @@ import numpy as np
 np.random.seed(1)
 
 class NeuralNetWork():
-    layer = {}
+    weights = {}
     b = {}
     def create_matrix_base_on_layer(self, previous_layer, current_layer):
-        return np.random.rand(current_layer, previous_layer) * 0.01
+        return np.random.rand(previous_layer, current_layer) * 0.01
 
     def create_structure(self, number_each_layer):
         l = len(number_each_layer)
         for i in range(1,l):
-            self.layer[i]  = self.create_matrix_base_on_layer(number_each_layer[i-1], number_each_layer[i])
-        return self.layer
+            self.weights[i]  = self.create_matrix_base_on_layer(number_each_layer[i-1], number_each_layer[i])
+        return self.weights
+
+    def create_b_base_on_layer(self, number_each_layer):
+        l = len(number_each_layer)
+        for i in range(1,l):
+            self.b[i] = np.zeros((number_each_layer[i],1))
+        return self.b
 
     def calculate_Z(self, X, weights, b):
         #print("X shapre",X.shape)
@@ -20,13 +26,8 @@ class NeuralNetWork():
         paramater['A_prev'] = X
         paramater['w'] = weights
         #paramater['A_prev'] = X
-        return np.dot(X, weights) + b, paramater
-
-    def create_b_base_on_layer(self, layers):
-        l = len(layers)
-        for i in range(1,l):
-            self.b[i] = np.random.rand()
-        return self.b
+        #print("wT",weights.T.shape)
+        return np.dot(X, weights) #+ b  
 
     def sigmoid(self, Z):
         return 1/ (1 + np.exp(-Z))
@@ -57,7 +58,7 @@ class NeuralNetWork():
         d['a'] = paramater['w'] * dZ
         return d
     def update_param(self, paramater):
-        self.layer
+        self.weights
 
 obj = NeuralNetWork()
 
@@ -65,12 +66,15 @@ weights = obj.create_structure([3,2,1])
 print('weights',weights)
 print(weights[1].shape)
 b = obj.create_b_base_on_layer([3,2,1])
-#print('b', b)
+print('b', b)
+print(b[1].shape)
 
 
 
+X= np.array([[1,1,1] ])
+#print(X.shape)
+print("Z",obj.calculate_Z(X,weights[1],b[1]))
 
-# X= np.array([[1,2,3] ])
 # Y = np.array([[1]])
 # #print(obj.sigmoid(2.88))
 
