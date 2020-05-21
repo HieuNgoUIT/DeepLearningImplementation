@@ -16,7 +16,7 @@ class NeuralNetWork():
     def create_b_base_on_layer(self, number_each_layer):
         l = len(number_each_layer)
         for i in range(1,l):
-            self.b[i] = np.zeros((number_each_layer[i],1))
+            self.b[i] = np.zeros((1,number_each_layer[i]))
         return self.b
 
     def calculate_Z(self, X, weights, b):
@@ -27,7 +27,8 @@ class NeuralNetWork():
         paramater['w'] = weights
         #paramater['A_prev'] = X
         #print("wT",weights.T.shape)
-        return np.dot(X, weights) #+ b  
+        #print('basfd',b.shape)
+        return np.dot(X, weights)+ b  , paramater
 
     def sigmoid(self, Z):
         return 1/ (1 + np.exp(-Z))
@@ -36,15 +37,10 @@ class NeuralNetWork():
         l = len(weights)
         A = X
         caches = []
-        #print(X.shape)
         for i in range(1,l+1):
-            #print(i)
-            X, cache = self.calculate_Z(A, weights[i], b[i])
-            #print('X' , X)
+            Z, cache = self.calculate_Z(A, weights[i], b[i])
             caches.append(cache)
-            A = self.sigmoid(X)
-            #print('A', A)
-            X = A
+            A = self.sigmoid(Z)
         return A, caches
     def compute_cost(self, AL, Y):
         m = Y.shape[0]
@@ -53,38 +49,45 @@ class NeuralNetWork():
     
     def gradient(self, dZ, paramater):
         d = {}
-        d['w'] = paramater['A_prev'] * dZ
+        #print('a',paramater['A_prev'].shape)
+        #print('w',paramater['w'].shape)
+        d['w'] = np.dot(paramater['A_prev'].T, dZ)
         d['b'] = dZ
-        d['a'] = paramater['w'] * dZ
+        d['a'] = np.dot(dZ, paramater['w'].T)
         return d
     def update_param(self, paramater):
-        self.weights
+        l = len(number_each_layer)
+        for i in range(l+1,-1,-1):
+            d = obj.gradient(dZ, caches[i-1])
+            weights[i] -= d['w']
+            b[i] -= d['b']
+            dZ = d['a_prev']
 
 obj = NeuralNetWork()
 
-weights = obj.create_structure([3,2,1])
-print('weights',weights)
-print(weights[1].shape)
-b = obj.create_b_base_on_layer([3,2,1])
-print('b', b)
-print(b[1].shape)
+weights = obj.create_structure([3,2])
+#print('weights',weights)
+print('w',weights[1].shape)
+b = obj.create_b_base_on_layer([3,2])
+#print('b', b)
+print('b',b[1].shape)
+
+X= np.array([[1,1,1]])
+print('a',X.shape)
+print("______________________")
+Y = np.array([[3,2]])
+
+AL, caches = obj.foward_prop(X,weights,b)
+#print(caches[1])
 
 
-
-X= np.array([[1,1,1] ])
-#print(X.shape)
-print("Z",obj.calculate_Z(X,weights[1],b[1]))
-
-# Y = np.array([[1]])
-# #print(obj.sigmoid(2.88))
-
-# AL, caches = obj.foward_prop(X,weights,b)
-# #print("caches",caches)
-# dZ = AL -Y
-# #print('dz', dZ)
-# #
-# d = obj.gradient(dZ, caches[0])
-# #print(d)
+dZ = AL -Y
+#print(dZ)
+#print('dzshape',dZ.shape)
+d = obj.gradient(dZ, caches[0])
+print('w shape',d['w'].shape)
+print('b shape',d['b'].shape)
+print('a shape',d['a'].shape)
 
 # #print(AL)
 # #print(obj.compute_cost(AL,Y))
