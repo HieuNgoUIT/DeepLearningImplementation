@@ -47,10 +47,11 @@ class NeuralNetWork():
     
     def gradient(self, dZ, caches):
         d = {}
+        m = caches['A_prev'].shape[0]
         #print('a',paramater['A_prev'].shape)
         #print('w',paramater['w'].shape)
-        d['w'] = np.dot(caches['A_prev'].T, dZ)
-        d['b'] = dZ
+        d['w'] = (1/m) * np.dot(caches['A_prev'].T, dZ)
+        d['b'] = (1/m) * np.sum(dZ, axis=0, keepdims=True)
         d['a'] = np.dot(dZ, caches['w'].T)
         return d
 
@@ -72,7 +73,7 @@ class NeuralNetWork():
 obj = NeuralNetWork([3,2,1])
 
 
-X= np.array([[1,2,3]])
-Y = np.array([[6]])
+X= np.array([[1,2,3], [4,5,6]])
+Y = np.array([[6], [15]])
 
 obj.fit(X,Y, 100, 0.01)
