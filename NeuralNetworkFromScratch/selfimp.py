@@ -26,6 +26,7 @@ class NeuralNetWork():
         paramater = {}
         paramater['A_prev'] = X
         paramater['w'] = weights
+        paramater['b'] = b
         return np.dot(X, weights)+ b  , paramater
 
     def sigmoid(self, Z):
@@ -52,7 +53,8 @@ class NeuralNetWork():
         #print('w',paramater['w'].shape)
         d['w'] = (1/m) * np.dot(caches['A_prev'].T, dZ)
         d['b'] = (1/m) * np.sum(dZ, axis=0, keepdims=True)
-        d['a'] = np.dot(dZ, caches['w'].T)
+        d['a'] = np.dot(dZ, caches['w'].T) 
+        print('dashape', d['a'].shape)
         return d
 
     def update_param(self, caches, dZ, alpha):
@@ -60,8 +62,17 @@ class NeuralNetWork():
             d = obj.gradient(dZ, caches[i-1])
             self.weights[i] -= alpha *  d['w']
             self.b[i] -= alpha * d['b']
-            dZ = d['a']
-
+            #print('a',caches[i-1]['A_prev'])
+            #print('w',caches[i-1]['w'])
+            #print('b',caches[i-1]['b'])
+            Z , _ = self.calculate_Z(caches[i-2]['A_prev'], caches[i-2]['w'], caches[i-2]['b'])
+            s = self.sigmoid(Z)
+            s1 = 1 -  self.sigmoid(Z)
+            c = s*s1
+            #print('c shape',c.shape)
+            dZ =  c * d['a'] 
+            #print(dZ.shape)
+            #print('c',dZ.shape)
     def fit(self, X, Y, epoch, alpha):
         for _ in range(epoch):
             AL, caches = self.foward_prop(X, self.weights, self.b)
@@ -71,9 +82,10 @@ class NeuralNetWork():
             self.update_param(caches, dZ, alpha)
 
 obj = NeuralNetWork([3,2,1])
+#print('shape',np.array([[1,2],[3,4] ]).shape)
+#print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
 
+X= np.array([[1,2,3]])
+Y = np.array([[6]])
 
-X= np.array([[1,2,3], [4,5,6]])
-Y = np.array([[6], [15]])
-
-obj.fit(X,Y, 100, 0.01)
+obj.fit(X,Y, 1, 0.01)
