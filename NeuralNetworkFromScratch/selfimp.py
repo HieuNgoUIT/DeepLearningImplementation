@@ -54,7 +54,7 @@ class NeuralNetWork():
         d['w'] = (1/m) * np.dot(caches['A_prev'].T, dZ)
         d['b'] = (1/m) * np.sum(dZ, axis=0, keepdims=True)
         d['a'] = np.dot(dZ, caches['w'].T) 
-        print('dashape', d['a'].shape)
+       # print('dashape', d['a'].shape)
         return d
 
     def update_param(self, caches, dZ, alpha):
@@ -80,12 +80,17 @@ class NeuralNetWork():
             print(cost)
             dZ = AL - Y
             self.update_param(caches, dZ, alpha)
+    def predict(self, X):
+        return self.foward_prop(X, self.weights,self.b)
 
-obj = NeuralNetWork([3,2,1])
+obj = NeuralNetWork([2,2,1])
 #print('shape',np.array([[1,2],[3,4] ]).shape)
 #print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
 
-X= np.array([[1,2,3]])
-Y = np.array([[6]])
+X= np.array([[0,0], [0,1], [1,0], [1,1]])
+Y = np.array([[0], [1], [1], [0]])
 
-obj.fit(X,Y, 1, 0.01)
+obj.fit(X,Y, 5000, 1.1)
+
+lable, _ = obj.predict(np.array([[0,1]]))
+print(lable)
