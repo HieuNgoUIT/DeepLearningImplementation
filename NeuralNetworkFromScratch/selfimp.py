@@ -83,14 +83,14 @@ class NeuralNetWork():
     def predict(self, X):
         return self.foward_prop(X, self.weights,self.b)
 
-obj = NeuralNetWork([2,2,1])
+obj = NeuralNetWork([2,1])
 #print('shape',np.array([[1,2],[3,4] ]).shape)
 #print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
 
-X= np.array([[0,0], [0,1], [1,0], [1,1]])
-Y = np.array([[0], [1], [1], [0]])
+X= np.array([[0,1], [1,0], [1,1], [0,0]])
+Y = np.array([[1], [1], [1], [0]])
 
-obj.fit(X,Y, 5000, 1.1)
+obj.fit(X,Y, 5000, 0.1)
 
-lable, _ = obj.predict(np.array([[0,1]]))
+lable, _ = obj.predict(np.array([[1,1]]))
 print(lable)
