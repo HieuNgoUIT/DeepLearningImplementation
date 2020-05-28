@@ -1,7 +1,7 @@
 import numpy as np 
 np.random.seed(1)
 
-class NeuralNetWork():
+class NeuralNetwork():
     
     def __init__(self, number_each_layer):
         self.weights = {}
@@ -59,7 +59,7 @@ class NeuralNetWork():
 
     def update_param(self, caches, dZ, alpha):
         for i in range(self.l-1, 0, -1):
-            d = obj.gradient(dZ, caches[i-1])
+            d = self.gradient(dZ, caches[i-1])
             self.weights[i] -= alpha *  d['w']
             self.b[i] -= alpha * d['b']
             #print('a',caches[i-1]['A_prev'])
@@ -83,14 +83,62 @@ class NeuralNetWork():
     def predict(self, X):
         return self.foward_prop(X, self.weights,self.b)
 
-obj = NeuralNetWork([2,1])
-#print('shape',np.array([[1,2],[3,4] ]).shape)
-#print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
+# obj = NeuralNetwork([2,1])
+# #print('shape',np.array([[1,2],[3,4] ]).shape)
+# #print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
 
-X= np.array([[0,1], [1,0], [1,1], [0,0]])
-Y = np.array([[1], [1], [1], [0]])
+# X= np.array([[0,1], [1,0], [1,1], [0,0]])
+# Y = np.array([[1], [1], [1], [0]])
 
-obj.fit(X,Y, 5000, 0.1)
+# obj.fit(X,Y, 5000, 0.1)
 
-lable, _ = obj.predict(np.array([[1,1]]))
-print(lable)
+# lable, _ = obj.predict(np.array([[1,1]]))
+# print(lable)
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import h5py
+import scipy
+from PIL import Image
+from scipy import ndimage
+from lr_utils import load_dataset
+import scipy.misc
+
+train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
+
+
+index = 7
+plt.imshow(train_set_x_orig[index])
+print ("y = " + str(train_set_y[:, index]) + ", it's a '" + classes[np.squeeze(train_set_y[:, index])].decode("utf-8") +  "' picture.")
+
+m_train = train_set_x_orig.shape[0]
+m_test = test_set_x_orig.shape[0]
+num_px = train_set_x_orig.shape[1] 
+
+
+print ("Number of training examples: m_train = " + str(m_train))
+print ("Number of testing examples: m_test = " + str(m_test))
+print ("Height/Width of each image: num_px = " + str(num_px))
+print ("Each image is of size: (" + str(num_px) + ", " + str(num_px) + ", 3)")
+print ("train_set_x shape: " + str(train_set_x_orig.shape))
+print ("train_set_y shape: " + str(train_set_y.shape))
+print ("test_set_x shape: " + str(test_set_x_orig.shape))
+print ("test_set_y shape: " + str(test_set_y.shape))
+
+
+# Reshape the training and test examples
+
+
+train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0],-1)
+test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0],-1)
+train_set_y = train_set_y.T
+test_set_y= test_set_y.T
+
+print ("train_set_x_flatten shape: " + str(train_set_x_flatten.shape))
+print ("train_set_y shape: " + str(train_set_y.shape))
+print ("test_set_x_flatten shape: " + str(test_set_x_flatten.shape))
+print ("test_set_y shape: " + str(test_set_y.shape))
+
+my_neural = NeuralNetwork([12288, 20, 7, 5, 1])
+my_neural.fit(train_set_x_flatten, train_set_y, 5000, 0.1)
