@@ -12,7 +12,7 @@ class NeuralNetwork():
         self.create_b()
 
     def create_matrix_base_on_layer(self, previous_layer, current_layer):
-        return np.random.rand(previous_layer, current_layer) * 0.01
+        return np.random.rand(previous_layer, current_layer) #* 0.01
 
     def create_weights(self):
         for i in range(1, self.l):
@@ -78,12 +78,6 @@ class NeuralNetwork():
                 dZ[Z<=0] = 0
             except:
                 pass
-
-            
-            # s = self.sigmoid(Z)
-            # s1 = 1 -  self.sigmoid(Z)
-            # c = s*s1
-            #dZ =  c * d['a']
     def fit(self, X, Y, epoch, alpha):
         for _ in range(epoch):
             AL, caches = self.foward_prop(X, self.weights, self.b)
@@ -94,16 +88,16 @@ class NeuralNetwork():
     def predict(self, X):
         return self.foward_prop(X, self.weights,self.b)
 
-obj = NeuralNetwork([2,2,1])
+obj = NeuralNetwork([3,256,1])
 #print('shape',np.array([[1,2],[3,4] ]).shape)
 #print('test sig', obj.sigmoid(np.array([[1,2],[3,4] ])))
 
-X= np.array([[0,1], [1,0], [1,1], [0,0]])
-Y = np.array([[0], [0], [1], [0]])
+X= np.array([[0,1,1], [0,1,0], [1,0,1], [0,0,1], [1,1,1]])
+Y = np.array([[0], [0], [0], [0] , [1]])
 
-obj.fit(X,Y, 5000, 0.1)
+obj.fit(X,Y, 100, 0.1)
 
-lable, _ = obj.predict(np.array([[1,1]]))
+lable, _ = obj.predict(np.array([[0,1,1]]))
 print(lable)
 
 
@@ -113,10 +107,10 @@ print(lable)
 # import scipy
 # from PIL import Image
 # from scipy import ndimage
-# from lr_utils import load_dataset
+# from lr_utils import load_data
 # import scipy.misc
 
-# train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
+# train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_data()
 
 
 # index = 7
@@ -152,4 +146,4 @@ print(lable)
 # print ("test_set_y shape: " + str(test_set_y.shape))
 
 # my_neural = NeuralNetwork([12288, 20, 7, 5, 1])
-# my_neural.fit(train_set_x_flatten, train_set_y, 5000, 0.1)
+# my_neural.fit(train_set_x_flatten, train_set_y, 1000, 1)
