@@ -2,12 +2,11 @@ import numpy as np
 np.random.seed(1)
 
 class NeuralNetwork():
-    
     def __init__(self, number_each_layer):
         self.weights = {}
         self.b = {}
         self.number_each_layer = number_each_layer
-        self.l = len(self.number_each_layer)
+        self.L = len(self.number_each_layer) -1 
         self.create_weights()
         self.create_b()
 
@@ -15,11 +14,11 @@ class NeuralNetwork():
         return np.random.rand(previous_layer, current_layer) #* 0.01
 
     def create_weights(self):
-        for i in range(1, self.l):
+        for i in range(1, self.L +1):
             self.weights[i]  = self.create_matrix_base_on_layer(self.number_each_layer[i-1], self.number_each_layer[i])
 
     def create_b(self):
-        for i in range(1,self.l):
+        for i in range(1,self.L + 1):
             self.b[i] = np.zeros((1, self.number_each_layer[i]))
 
     def calculate_Z(self, X, weights, b):
@@ -35,17 +34,14 @@ class NeuralNetwork():
     def relu(self ,Z):
         return np.maximum(0,Z)
 
-    def foward_prop(self, X, weights, b):
-        A = X
+    def foward_prop(self, A, weights, b):
         caches = []
-        current = 0
-        for i in range(1, self.l -1 ):
+        for i in range(1, self.L  ):
             Z, cache = self.calculate_Z(A, weights[i], b[i])
             caches.append(cache)
             A = self.relu(Z)
-            current = i
 
-        Z, cache = self.calculate_Z(A, weights[current+1], b[current+1])
+        Z, cache = self.calculate_Z(A, weights[self.L], b[self.L])
         caches.append(cache)
         A = self.sigmoid(Z)
         return A, caches
@@ -58,16 +54,13 @@ class NeuralNetwork():
     def gradient(self, dZ, caches):
         d = {}
         m = caches['A_prev'].shape[0]
-        #print('a',paramater['A_prev'].shape)
-        #print('w',paramater['w'].shape)
         d['w'] = (1/m) * np.dot(caches['A_prev'].T, dZ)
         d['b'] = (1/m) * np.sum(dZ, axis=0, keepdims=True)
         d['a'] = np.dot(dZ, caches['w'].T) 
-       # print('dashape', d['a'].shape)
         return d
 
     def update_param(self, caches, dZ, alpha):
-        for i in range(self.l-1, 0, -1):
+        for i in range(self.L, 0, -1):
             d = self.gradient(dZ, caches[i-1])
             self.weights[i] -= alpha *  d['w']
             self.b[i] -= alpha * d['b']
@@ -78,6 +71,7 @@ class NeuralNetwork():
                 dZ[Z<=0] = 0
             except:
                 pass
+
     def fit(self, X, Y, epoch, alpha):
         for _ in range(epoch):
             AL, caches = self.foward_prop(X, self.weights, self.b)
@@ -85,8 +79,12 @@ class NeuralNetwork():
             print(cost)
             dZ = AL - Y
             self.update_param(caches, dZ, alpha)
+            
     def predict(self, X):
         return self.foward_prop(X, self.weights,self.b)
+
+
+
 
 obj = NeuralNetwork([3,256,1])
 #print('shape',np.array([[1,2],[3,4] ]).shape)
@@ -97,7 +95,7 @@ Y = np.array([[0], [0], [0], [0] , [1]])
 
 obj.fit(X,Y, 100, 0.1)
 
-lable, _ = obj.predict(np.array([[0,1,1]]))
+lable, _ = obj.predict(np.array([[1,1,1]]))
 print(lable)
 
 
